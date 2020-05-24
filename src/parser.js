@@ -53,7 +53,7 @@ function collectPosts(data, config) {
         date: getPostDate(post),
         slug: getPostSlugF(post),
         path: getPostPathF(post),
-        description: getPostDescription(post),
+        description: getPostDes(post),
         lang: "fa",
         tags: getCategory(post),
         image: getFirstImageLink(post),
@@ -85,6 +85,22 @@ function getPostCoverImageId(post) {
   return id;
 }
 
+function getPostDes(post) {
+  if (post.postmeta === undefined) {
+    return undefined;
+  }
+  const postmeta = post.postmeta.find(
+    (postmeta) => postmeta.meta_key[0] === "_yoast_wpseo_metadesc"
+  );
+  const metaTag = postmeta ? postmeta.meta_value[0] : post.title[0];
+  return "'" + metaTag + "'";
+}
+
+function getPostExcerpt(post) {
+  const excerpt = post.encoded[1].replace(/(\r\n|\n|\r)/gm, " ");
+  return excerpt;
+}
+
 function getPostTitle(post) {
   return post.title[0];
 }
@@ -97,10 +113,6 @@ function getPostSlugF(post) {
 function getPostPathF(post) {
   let year = new Date(post.pubDate[0]).getFullYear();
   return "/fa/blog/" + year + "/" + post.post_name[0];
-}
-
-function getPostDescription(post) {
-  return post.description[0];
 }
 
 function getPostDate(post) {
