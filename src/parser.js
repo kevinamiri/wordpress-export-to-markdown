@@ -35,38 +35,47 @@ function getItemsOfType(data, type) {
 function collectPosts(data, config) {
   // this is passed into getPostContent() for the markdown conversion
   const turndownService = translator.initTurndownService();
-
+  let arrOfLang = [];
   const posts = getItemsOfType(data, "post")
     .filter((post) => post.status[0] !== "trash" && post.status[0] !== "draft")
-    .map((post) => ({
-      // meta data isn't written to file, but is used to help with other things
-      meta: {
-        id: getPostId(post),
-        slug: getPostSlug(post),
-        coverImageId: getPostCoverImageId(post),
-        imageUrls: [],
-      },
-      frontmatter: {
-        id: getPostId(post),
-        title: getPostTitle(post),
-        templateKey: "blog-post",
-        date: getPostDate(post),
-        slug: getPostSlugF(post),
-        path: getPostPathF(post),
-        description: getPostDes(post),
-        lang: "fa",
-        tags: getCategory(post),
-        image: getFirstImageLink(post),
-      },
-      content: translator.getPostContent(post, turndownService, config),
-    }));
-
-  console.log(posts.length + " posts found.");
+    .map((post, index) => {
+      arrOfLang.push({
+        id: `${index + 30}`,
+        en: "/",
+        fa: getPostLang(post),
+      });
+      return {
+        meta: {
+          id: getPostId(post),
+          slug: getPostSlug(post),
+          coverImageId: getPostCoverImageId(post),
+          imageUrls: [],
+        },
+        frontmatter: {
+          id: `'${index + 30}'`,
+          title: getPostTitle(post),
+          templateKey: "blog-post",
+          date: getPostDate(post),
+          slug: getPostSlugF(post),
+          path: getPostPathF(post),
+          description: getPostDes(post),
+          lang: "fa",
+          tags: getCategory(post),
+          image: getFirstImageLink(post),
+        },
+        content: translator.getPostContent(post, turndownService, config),
+      };
+    });
+  console.log(arrOfLang);
   return posts;
 }
 
 function getPostId(post) {
   return post.post_id[0];
+}
+
+function getPostIdF(post) {
+  return "'" + post.post_id[0] + "'";
 }
 
 function getPostSlug(post) {
@@ -108,6 +117,11 @@ function getPostTitle(post) {
 function getPostSlugF(post) {
   let year = new Date(post.pubDate[0]).getFullYear();
   return "/fa/blog/" + year + "/" + post.post_name[0];
+}
+
+function getPostLang(post) {
+  let year = new Date(post.pubDate[0]).getFullYear();
+  return year + "/" + post.post_name[0];
 }
 
 function getPostPathF(post) {

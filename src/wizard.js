@@ -20,7 +20,7 @@ const options = [
     name: "input",
     type: "file",
     description: "Path to WordPress export file",
-    default: "zebravpn1.xml",
+    default: "zebravpn3.xml",
   },
   {
     name: "output",
